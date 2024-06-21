@@ -7,7 +7,7 @@ import requests
 
 def collect_prom_reload_metrics(metric_list, scenario, ip, port) -> None:
     req_url = f"http://{ip}:{port}/metrics"
-    resp = requests.get(req_url)
+    resp = requests.get(req_url, timeout=60)
     resp_decoded = resp.content.decode("utf-8")
     reload_metric = ""
     for line in resp_decoded.splitlines():
