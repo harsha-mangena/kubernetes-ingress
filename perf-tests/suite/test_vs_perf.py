@@ -77,7 +77,7 @@ class TestVirtualServerPerf:
         resp = requests.get(
             virtual_server_setup.backend_1_url,
             headers={"host": virtual_server_setup.vs_host},
-        )
+        timeout=60)
         assert resp.status_code == 200
         collect_prom_reload_metrics(
             reload,

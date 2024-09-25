@@ -112,7 +112,7 @@ class TestIngressPerf:
         ingress_host = get_first_ingress_host_from_yaml(f"{TEST_DATA}/smoke/standard/smoke-ingress.yaml")
         wait_before_test()
         ensure_connection(setup.req_url, 200, {"host": ingress_host})
-        resp = requests.get(setup.req_url, headers={"host": ingress_host}, verify=False)
+        resp = requests.get(setup.req_url, headers={"host": ingress_host}, verify=False, timeout=60)
         assert resp.status_code == 200
         collect_prom_reload_metrics(
             reload,
