@@ -1,7 +1,6 @@
 import json
 
 import pytest
-import requests
 from common import collect_prom_reload_metrics, run_perf
 from settings import TEST_DATA
 from suite.utils.resources_utils import (
@@ -18,6 +17,7 @@ from suite.utils.resources_utils import (
     wait_until_all_pods_are_ready,
 )
 from suite.utils.yaml_utils import get_first_ingress_host_from_yaml
+from security import safe_requests
 
 reload = []
 
@@ -112,7 +112,7 @@ class TestIngressPerf:
         ingress_host = get_first_ingress_host_from_yaml(f"{TEST_DATA}/smoke/standard/smoke-ingress.yaml")
         wait_before_test()
         ensure_connection(setup.req_url, 200, {"host": ingress_host})
-        resp = requests.get(setup.req_url, headers={"host": ingress_host}, verify=False)
+        resp = safe_requests.get(setup.req_url, headers={"host": ingress_host}, verify=False)
         assert resp.status_code == 200
         collect_prom_reload_metrics(
             reload,
