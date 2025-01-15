@@ -4,9 +4,9 @@ import subprocess
 from datetime import datetime
 
 import pytest
-import requests
 from common import collect_prom_reload_metrics, run_perf
 from suite.utils.resources_utils import get_resource_metrics, wait_before_test
+from security import safe_requests
 
 reload = []
 
@@ -74,7 +74,7 @@ class TestVirtualServerPerf:
         setup_users,
     ):
         wait_before_test()
-        resp = requests.get(
+        resp = safe_requests.get(
             virtual_server_setup.backend_1_url,
             headers={"host": virtual_server_setup.vs_host},
         )

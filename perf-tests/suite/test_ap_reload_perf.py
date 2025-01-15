@@ -6,7 +6,6 @@ import subprocess
 from datetime import datetime
 
 import pytest
-import requests
 import yaml
 from kubernetes.client import V1ContainerPort
 from settings import DEPLOYMENTS, TEST_DATA
@@ -36,6 +35,7 @@ from suite.utils.resources_utils import (
     wait_until_all_pods_are_ready,
 )
 from suite.utils.yaml_utils import get_first_ingress_host_from_yaml
+from security import safe_requests
 
 ap_policy = "dataguard-alarm"
 valid_resp_addr = "Server address:"
@@ -178,7 +178,7 @@ def assert_invalid_responses(response) -> None:
 class TestAppProtectPerf:
     def collect_prom_reload_metrics(self, metric_list, scenario, ip, port) -> None:
         req_url = f"http://{ip}:{port}/metrics"
-        resp = requests.get(req_url)
+        resp = safe_requests.get(req_url)
         resp_decoded = resp.content.decode("utf-8")
         reload_metric = ""
         for line in resp_decoded.splitlines():
@@ -214,7 +214,7 @@ class TestAppProtectPerf:
         print("--------- Run test while AppProtect module is enabled with correct policy ---------")
         ensure_response_from_backend(appprotect_setup.req_url, ingress_host)
         wait_before_test(40)
-        response = requests.get(appprotect_setup.req_url + "/<script>", headers={"host": ingress_host}, verify=False)
+        response = safe_requests.get(appprotect_setup.req_url + "/<script>", headers={"host": ingress_host}, verify=False)
         print(response.text)
         self.collect_prom_reload_metrics(
             reload_ap,
@@ -264,7 +264,7 @@ class TestAppProtectPerf:
         ensure_response_from_backend(appprotect_setup.req_url, ingress_host)
         wait_before_test(30)
         response = ""
-        response = requests.get(appprotect_setup.req_url + "/v1/<script>", headers={"host": ingress_host}, verify=False)
+        response = safe_requests.get(appprotect_setup.req_url + "/v1/<script>", headers={"host": ingress_host}, verify=False)
         print(response.text)
         self.collect_prom_reload_metrics(
             reload_ap_path,
@@ -308,7 +308,7 @@ class TestAppProtectPerf:
         print("--------- Run test while AppProtect module is enabled with correct policy ---------")
         ensure_response_from_backend(appprotect_setup.req_url, ingress_host)
         wait_before_test(30)
-        response = requests.get(appprotect_setup.req_url + "/<script>", headers={"host": ingress_host}, verify=False)
+        response = safe_requests.get(appprotect_setup.req_url + "/<script>", headers={"host": ingress_host}, verify=False)
         print(response.text)
         self.collect_prom_reload_metrics(
             reload_ap_with_ingress,
@@ -351,7 +351,7 @@ class TestAppProtectPerf:
         ensure_response_from_backend(appprotect_setup.req_url, ingress_host)
         wait_before_test(30)
         response = ""
-        response = requests.get(appprotect_setup.req_url + "/<script>", headers={"host": ingress_host}, verify=False)
+        response = safe_requests.get(appprotect_setup.req_url + "/<script>", headers={"host": ingress_host}, verify=False)
         print(appprotect_setup.req_url + "/<script>")
         print(ingress_host)
         print(response.text)
